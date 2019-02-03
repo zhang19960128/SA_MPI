@@ -38,7 +38,7 @@ int main(){
 	 }
 	clock_t start=clock();
 	double penaltyp;
-	for(size_t k=0;k<10;k++){
+	for(size_t k=0;k<100;k++){
 		penaltyp = PenaltyFunc(control::xop,control::database[i],control::ionsize[i],control::minienergytick[i]);//Zhenbang
 		if(world_rank==0){
 		 std::cout<<"the penalty is: "<<penaltyp<<std::endl;
