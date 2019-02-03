@@ -28,7 +28,7 @@ box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cut
 	int world_rank,mpi_size;
 	MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
 	MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
-	int box_ave=ceil(flag/mpi_size);
+	int box_ave=floor((flag+0.0)/mpi_size);
 	int box_size_local;
 	int box_start=0;
 	int box_end=0;
@@ -155,5 +155,6 @@ box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cut
 		delete [] atomconfig;
 	}
 	delete [] type_tick;
+	std::cout<<"finishe reading ION file without any problems"<<std::endl;
   return ionall;
 }

@@ -4,7 +4,6 @@
 #include <string>
 #include "readion.h"
 #include <ctime>
-#include "interface.h"
 #include "readpara.h"
 #include "penalty.h"
 #include "sa.h"
@@ -41,7 +40,8 @@ int main(){
 	for(size_t k=0;k<100;k++){
 		penaltyp = PenaltyFunc(control::xop,control::database[i],control::ionsize[i],control::minienergytick[i]);//Zhenbang
 		if(world_rank==0){
-		 std::cout<<"the penalty is: "<<penaltyp<<std::endl;
+			std::cout<<"the cycle time is: "<<k<<std::endl;
+		 std::cout<<"the penalty is: "<<penaltyp<<" recycle time is"<<k<<std::endl;
 		}
 	}
 	clock_t end=clock();

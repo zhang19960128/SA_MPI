@@ -183,7 +183,7 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
 		int world_rank,mpi_size;
 		MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
 		MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
-		int box_ave=ceil(number/mpi_size);
+		int box_ave=ceil((number+0.0)/mpi_size);
 		int box_size_local;
 		double ref_energy[2]={0.0,0.0};
 		if(world_rank!=mpi_size-1){
