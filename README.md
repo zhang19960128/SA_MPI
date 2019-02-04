@@ -11,6 +11,5 @@ If you encounter any problems, please don't contact us.
 			module rm gnu-compiler  
 			make -j 8  
 6. For DOE machine:  
-			module load impi  
 			Change Makefile **Cxx=##** to **Cxx=CC**
 
