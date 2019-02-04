@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 #include "sa.h"
 #include <vector>
 #include <iostream>
@@ -135,7 +136,7 @@ void findvalue(std::vector<std::string>& input,std::string key,int& keyvalue){
 
 void readPT(std::string PTfile){
 	std::fstream fs;
-	fs.open(PTfile,std::fstream::in);
+	fs.open(PTfile.c_str(),std::fstream::in);
 	std::istringstream temp_stream;
 	std::vector<std::string> input;
 	std::vector<std::string> input_spe;
@@ -342,7 +343,10 @@ void readPT(std::string PTfile){
 		do{
 			temp=decomment(temp);
 			if(tick<control::paracount_bvv+control::paracount_charge){
-			control::lb[tick]=std::stof(temp);
+				temp_stream.clear();
+				temp_stream.str(temp);
+				temp_stream>>control::lb[tick];
+				temp_stream.clear();
 			}
 			tick=tick+1;
 			getline(fs,temp);
@@ -356,7 +360,10 @@ void readPT(std::string PTfile){
 		do{
 			temp=decomment(temp);
 			if(tick<control::paracount_bvv+control::paracount_charge){
-			control::ub[tick]=std::stof(temp);
+				temp_stream.clear();
+				temp_stream.str(temp);
+				temp_stream>>control::ub[tick];
+				temp_stream.clear();
 			}
 			tick=tick+1;
 			getline(fs,temp);

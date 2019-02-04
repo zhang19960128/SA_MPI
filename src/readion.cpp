@@ -11,7 +11,7 @@
 /*number is the number of atoms,boxnumber is the how many number of structures are there, ref is the reference structure. cutoff is the cut-off the iteractive force.*/
 box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cutoff){
 	std::fstream fs;
-	fs.open(inputfile,std::fstream::in);
+	fs.open(inputfile.c_str(),std::fstream::in);
 	std::string line;
 	std::istringstream stream1;
 	getline(fs,line);

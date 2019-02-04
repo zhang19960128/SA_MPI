@@ -4,6 +4,7 @@
 #include "readpara.h"
 #include <math.h>
 #include <mpi.h>
+#include <stdlib.h>
 #include "output.h"
 namespace saconst{
  double sa_temp=0.0001;
