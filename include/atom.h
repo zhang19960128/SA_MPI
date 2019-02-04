@@ -26,7 +26,7 @@ typedef struct Atom{
 double distance(double* a,double* b);
 class box{
 	public:
-		box()=default;//c++ 11 feature
+		box();//c++ 11 feature
 		box(atom* inputallatom,
 				int t,//type numbers
 				int s,//total number of atoms

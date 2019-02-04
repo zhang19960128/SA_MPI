@@ -1,10 +1,8 @@
 #! /bin/bash
 #SBATCH -p debug
 #SBATCH -A m1700
-#SBATCH -N 4
+#SBATCH -N 10
 #SBATCH -C haswell
 #SBATCH -t 00:06:00
 #SBATCH -J haswell
-module load impi
-export I_MPI_PMI_LIBRARY=/usr/lib64/slurmpmi/libpmi.so
-srun -n 96 ./sa.x
+srun -n 240 ./sa.x

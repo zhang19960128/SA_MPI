@@ -1,5 +1,5 @@
-CXX=mpiicc
-CXXFLAGS= -std=c++11
+CXX=CC
+CXXFLAGS=
 DEPS= interface.h image.h atom.h readion.h readpara.h sa.h penalty.h simann.h
 LIBPATH =
 CXXFLAGS +=

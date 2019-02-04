@@ -14,6 +14,35 @@ double distance(double* a,double* b){
 	}
 	return sqrt(s);
 }
+box::box(){
+	virtsize=0;
+	p=NULL;
+	size=0;
+	type=0;
+	virtatom=NULL;
+	r0=NULL;
+	v0=NULL;
+	cij=NULL;
+	sij=NULL;
+	svvij=NULL;
+	bvrcut=NULL;
+	bvenergy=0.0;
+	bvvenergy=0.0;
+	ljenergy=0.0;
+	epsilonenergy=0.0;
+	bvvrcut=NULL;
+	vv0=NULL;
+	ljrcut=0.0;
+	bij=NULL;
+	epsilon=NULL;
+	stress=NULL;
+	stressdft=NULL;
+	dftenergy=0.0;
+	mdenergy=0.0;
+	mdrelevantenergy=0.0;
+	dftrelevantenergy=0.0;
+	weight=0.0;
+}
 box::box(atom* inputallatom,
 		int t,
 		int s,
