@@ -9,3 +9,4 @@
 6. For DOE machine:  
 			module load impi  
 			make -j 8  
+			(note: there are still some problems in the DOE intel-mpi compilers. Waiting to be solved)  
