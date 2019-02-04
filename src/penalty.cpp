@@ -183,17 +183,18 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
 		int world_rank,mpi_size;
 		MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
 		MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
-		int box_ave=ceil((number+0.0)/mpi_size);
+		int box_ave=floor((number+0.00001)/mpi_size);
+		int remain=number%mpi_size;
 		int box_size_local;
 		double ref_energy[2]={0.0,0.0};
-		if(world_rank!=mpi_size-1){
-			box_size_local=box_ave;
+		if(world_rank<remain){
+			box_size_local=box_ave+1;
 		}
 		else{
-			box_size_local=number-(mpi_size-1)*box_ave;
+			box_size_local=box_ave;
 		}
-		int ref_proc=floor(indexRef/box_ave);
-		int ref_id_proc=indexRef-ref_proc*box_ave;
+		int ref_proc=indexRef%mpi_size;
+		int ref_id_proc=ceil((indexRef+0.0)/mpi_size)-1;
     for (size_t i=0; i<box_size_local; i++){
         ionall[i].mdenergy = 0;
         ionall[i].updatebvparameter(control::bvvmatrix);

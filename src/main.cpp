@@ -39,10 +39,12 @@ int main(){
 	double penaltyp;
 	for(size_t k=0;k<100;k++){
 		penaltyp = PenaltyFunc(control::xop,control::database[i],control::ionsize[i],control::minienergytick[i]);//Zhenbang
+		MPI_Barrier(MPI_COMM_WORLD);
 		if(world_rank==0){
 			std::cout<<"the cycle time is: "<<k<<std::endl;
 		 std::cout<<"the penalty is: "<<penaltyp<<" recycle time is"<<k<<std::endl;
 		}
+
 	}
 	clock_t end=clock();
 		if(world_rank==0){

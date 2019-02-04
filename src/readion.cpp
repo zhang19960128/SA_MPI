@@ -28,21 +28,17 @@ box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cut
 	int world_rank,mpi_size;
 	MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
 	MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
-	int box_ave=floor((flag+0.0)/mpi_size);
+	int box_ave=floor((flag+0.0000001)/mpi_size);
+	int remain=flag%mpi_size;
 	int box_size_local;
-	int box_start=0;
-	int box_end=0;
 	ref=0;
 	double e_ref=1e25;
-	if(world_rank!=mpi_size-1){
-		box_size_local=box_ave;
-		box_start=world_rank*box_ave;
-		box_end=(world_rank+1)*box_ave;
+	int local_struct_ref=0;
+	if(world_rank<remain){
+		box_size_local=box_ave+1;
 	}
 	else{
-		box_size_local=flag-(mpi_size-1)*box_ave;
-		box_start=world_rank*box_ave;
-		box_end=flag;
+		box_size_local=box_ave;
 	}
 	box* ionall=new box[box_size_local];
 	atom* atomconfig;
@@ -149,12 +145,12 @@ box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cut
 			}
 			atomconfig[i].type=type_tick[i];
 		}
-		if(tick>=box_start && tick<box_end){
-			ionall[tick-box_start].init(atomconfig,number,species::spe.size(),cutoff,period,control::bvvmatrix,dftenergy,stress_dft,weight);
+		if(tick%mpi_size==world_rank){
+			ionall[local_struct_ref].init(atomconfig,number,species::spe.size(),cutoff,period,control::bvvmatrix,dftenergy,stress_dft,weight);
+			local_struct_ref++;
 		}
 		delete [] atomconfig;
 	}
 	delete [] type_tick;
-	std::cout<<"finishe reading ION file without any problems"<<std::endl;
   return ionall;
 }
