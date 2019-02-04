@@ -7,7 +7,7 @@ If you encounter any problems, please don't contact us.
 4. Capable of generating the same parameter but different database configurations.
 5. For DOD thunder machines:  
 			module load intel-mpi  
-			Change Makefile **CXX=##** to *CXX=mpiicc*
+			Change Makefile **CXX=##** to **CXX=mpiicc**
 			module rm gnu-compiler  
 			make -j 8  
 6. For DOE machine:  
