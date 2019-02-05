@@ -4,8 +4,10 @@
 #include "readpara.h"
 #include <math.h>
 #include <mpi.h>
-#include <stdlib.h>
+#include <iostream>
 #include "output.h"
+#include <fstream>
+#include <new>
 namespace saconst{
  double sa_temp=0.0001;
  double sa_ratio=0.95;
@@ -46,19 +48,20 @@ void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int),
    double ratio,ratiop;
    int nnew,nfcnev,*nacp;
    int iseed1, iseed2;
-   FILE *safile;
    int saiter;
    double *xopt, *xp;
 
-   nacp = (int*) malloc(N*sizeof(int));
-   xopt = (double*) malloc(N*sizeof(double));
-   xp   = (double*) malloc(N*sizeof(double));
+   nacp = new int [N];
+   xopt = new double [N];
+   xp   = new double [N];
 
    /* Simulated Annealing output */
 	 int world_rank;
+	 std::fstream safile,optout;
 	 MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
 	 if(world_rank==0){
-   safile=fopen("sa.out","w");
+	 	safile.open("sa.out",std::fstream::out);
+	 	optout.open("opt.out",std::fstream::out);
 	 }
    /* initilization of xopt */
    for(h0=0;h0<N;h0++)
@@ -121,13 +124,9 @@ void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int),
 			  	 penaltyOPT=penaltyp;
 			   	 for(h0=0;h0<N;h0++)
 			     	 xopt[h0] = xp[h0];
-			   nnew++;
-			  // WriteFiles(NT,NS,N,h,j,m, saiter, nnew, penaltyp, vm);
-					 if(world_rank==0){
-				 			write_opt_parameter("opt.out");
-		   				printf("  NEW OPTIMUM\t%10.5lg %7d %7d %7d %3d %10.5lg\n", penaltyOPT,saiter,m,j,h,xp[h]);
-					}
-			//   fflush(safile);
+			       nnew++;
+				 	   write_opt_parameter(optout);
+		   		   safile<<"  NEW OPTIMUM "<<penaltyOPT<<"\t"<<saiter<<"\t"<<m<<"\t"<<j<<"\t"<<h<<"\t"<<xp[h]<<std::endl;
 					}
 		     }
 		   else{
@@ -144,7 +143,7 @@ void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int),
 						}
 		     }
 			}
-	       } /* h */
+	  } /* h */
 	 } /* j */
 	 
 	 
@@ -185,12 +184,11 @@ void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int),
          xacc[h0] = xopt[h0];
 	}  
  } /* saiter */
-   fclose(safile);
-   
-   
-   free(nacp);
-   free(xopt);
-   free(xp);
+	 if(world_rank==0){
+   	safile.close();
+		optout.close();
+	 }
+   delete [] nacp;
+   delete [] xopt;
+   delete [] xp;
 }
-
-

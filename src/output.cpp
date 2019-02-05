@@ -43,13 +43,11 @@ void writeoutput(box* input,int size,int tick,int saiter,std::string deoptfile,s
 		std::cout<<std::endl;
 	}
 }
-void write_opt_parameter(std::string optout){
-	std::fstream fs;
-	fs.open(optout.c_str(),std::fstream::app);
+void write_opt_parameter(std::fstream& fs){
 	fs<<"the new-optimized parameters are: "<<std::endl;
 	for(size_t i=0;i<control::pair_num;i++){
 	  for(size_t j=0;j<12;j++){
-			fs<<std::setw(8)<<control::bvvmatrix[i][j]<<"\t";
+			fs<<std::setw(8)<<std::setprecision(7)<<control::bvvmatrix[i][j]<<"\t";
 		}
 		fs<<std::endl;
 	}
@@ -59,7 +57,29 @@ void write_opt_parameter(std::string optout){
 	fs<<std::endl;
 	size_t size=species::spe.size();
 	for(size_t i=0;i<size;i++){
-		fs<<std::setw(8)<<control::charge[i]<<"\t";
+		fs<<std::setw(8)<<std::setprecision(7)<<control::charge[i]<<"\t";
 	}
 	fs<<std::endl;
+	fs<<"the Change-Range of Parameters are: "<<std::endl;
+	int tick=0;
+	for(size_t i=0;i<control::pair_num;i++){
+	  for(size_t j=0;j<12;j++){
+			fs<<std::setw(8)<<std::setprecision(7)<<control::bvvmatrixmap[i][j]*control::vm[tick]<<"\t";
+			if(control::bvvmatrixmap[i][j]==1){
+				tick++;
+			}
+		}
+		fs<<std::endl;
+	}
+	for(size_t i=0;i<control::site_name.size();i++){
+		fs<<control::site_name[i]<<"\t";
+	}
+	fs<<std::endl;
+	for(size_t i=0;i<control::site_name.size();i++){
+		fs<<std::setw(8)<<std::setprecision(7)<<control::vm[tick]<<"\t";
+		tick++;
+	}
+	fs<<"(the final site parameter change range is zero due to Charge-Neutral)";
+	fs<<std::endl;
+	fs.close();
 }

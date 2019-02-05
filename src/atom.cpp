@@ -232,7 +232,7 @@ void box::computeAll(){//zhenbang
     computebvv();
     //computestress();
     computelj();
-    computelong(1e-6);
+    computelong(1e-14);
 		mdenergy=bvenergy+bvvenergy+ljenergy+epsilonenergy;
 }
 
