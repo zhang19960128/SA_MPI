@@ -162,7 +162,8 @@ void readPT(std::string PTfile){
 	            findvalue(input,"sa_sweight",saconst::sa_sweight);
 	            findvalue(input,"sa_nt",saconst::sa_nt);
 	            findvalue(input,"sa_ns",saconst::sa_ns);
-                findvalue(input,"sa_atom_num",saconst::sa_atom_num);
+							findvalue(input,"sa_max",saconst::sa_max);
+							findvalue(input,"sa_atom_num",saconst::sa_atom_num);
 		}
 		getline(fs,temp);
 		}while(temp.find("/")==std::string::npos);

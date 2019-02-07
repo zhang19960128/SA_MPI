@@ -170,11 +170,11 @@ void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int),
       penaltySTAR[0] = penaltyACC;
       for(h0=0;h0<NEPS;h0++)
 	 		QUIT = 1;
-      for(h0=0;h0<NEPS;h0++)
+      for(h0=0;h0<NEPS;h0++){
          if( fabs(penaltyACC-penaltySTAR[h0]) > EPS ) QUIT = 0;
-      
+				 std::cout<<penaltySTAR[h0]<<"the QUIT signal is: "<<QUIT<<std::endl;
+			}
       /* Quit if penaltyfunction is optimized !! */
-      if (QUIT == 1) break;
       
       sa_temp = sa_temp * sa_ratio;
       
@@ -182,7 +182,12 @@ void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int),
       penaltyACC = penaltyOPT;
       for(h0=0;h0<N;h0++)
          xacc[h0] = xopt[h0];
-	}  
+	}
+			MPI_Bcast(&QUIT,1,MPI_INT,0,MPI_COMM_WORLD);
+			if(world_rank==0){
+				std::cout<<saiter<<std::endl;
+			}
+      if (QUIT == 1) break;
  } /* saiter */
 	 if(world_rank==0){
    	safile.close();
