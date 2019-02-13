@@ -195,16 +195,16 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
 			box_size_local=box_ave;
 		}
 		int ref_proc=indexRef%mpi_size;
-		int ref_id_proc=ceil((indexRef+0.0)/mpi_size)-1;
+		int ref_id_proc=floor((indexRef+0.000)/mpi_size);
     for (size_t i=0; i<box_size_local; i++){
         ionall[i].mdenergy = 0;
         ionall[i].updatebvparameter(control::bvvmatrix);
         ionall[i].computeAll();
-				std::cout<<"the box: "<<i<<" and energy is "<<ionall[i].mdenergy<<std::endl;
     }
 		if(ref_proc==world_rank){
 			ref_energy[0]=ionall[ref_id_proc].mdenergy;			
 			ref_energy[1]=ionall[ref_id_proc].dftenergy;
+			std::cout<<"the reference energy is: "<<ref_energy[0]<<" "<<std::setprecision(10)<<ref_energy[1]<<std::endl;
 		}
 		MPI_Bcast(&ref_energy,2,MPI_DOUBLE,ref_proc,MPI_COMM_WORLD);
     /*Calculate the penalty*/
@@ -212,23 +212,23 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
     double PenaltyF = 0;
     for (size_t i=0; i<box_size_local; i++){
         PenaltyE += fabs((ionall[i].mdenergy-ref_energy[0]) - (ionall[i].dftenergy-ref_energy[1]))*ionall[i].weight;
-        for (size_t j=0; j<ionall[i].size; j++){
+				for (size_t j=0; j<ionall[i].size; j++){
             for (size_t k=0; k<3; k++){
                 PenaltyF += fabs((ionall[i].allatom[j].force[k]-ionall[i].allatom[j].dftforce[k]))*ionall[i].weight; 
-            }
+						}
         }
     }
     PenaltyE = PenaltyE/number*saconst::sa_eweight;
     PenaltyF = PenaltyF/(number*3*ionall[0].size)*saconst::sa_fweight;
 		penalty = PenaltyE + PenaltyF;
 		double Penaltyall=0.0;
-		double PenaltyE_all=0.0;
-		double PenaltyF_all=0.0;
-		MPI_Reduce(&PenaltyE,&PenaltyE_all,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-		MPI_Reduce(&PenaltyF,&PenaltyF_all,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+	//	double PenaltyE_all=0.0;
+	//	double PenaltyF_all=0.0;
+	//	MPI_Reduce(&PenaltyE,&PenaltyE_all,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+	//	MPI_Reduce(&PenaltyF,&PenaltyF_all,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
 		MPI_Reduce(&penalty,&Penaltyall,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
 		if(world_rank==0){
-			std::cout<<"The total Penalty is: "<<Penaltyall<<" Energy Penalty is: "<<PenaltyE_all<<" Force Penalty is: "<<PenaltyF_all<<std::endl;
+			std::cout<<"The total Penalty is: "<<Penaltyall<<std::endl;
 		}
     return Penaltyall;
 }
