@@ -76,8 +76,10 @@ box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cut
 	for(size_t tick=0;tick<flag;tick++){
 		getline(fs,line);
 		atomconfig=new atom [number];
+	std::cout<<"the readion function, reading the input parameters are: "<<std::endl;
 		for(size_t j=0;j<number;j++){
 			getline(fs,line);
+			stream1.clear();
 			stream1.str(line);
 		/*reading atomic positions*/
 			for(size_t k=0;k<3;k++){
@@ -151,6 +153,7 @@ box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cut
 		}
 		delete [] atomconfig;
 	}
+	delete [] period;
 	delete [] type_tick;
   return ionall;
 }

@@ -23,9 +23,9 @@ osite 3
 &species
 #the sequence of input species are the sequence of Bvv matrix model#
 #We only consider A B O site charge change in the map file 
-Ba 1  1.34730 asite#
-Ti 2  1.28905 bsite#
-O  3  -0.87878 osite#
+Ba 1  0.00000 asite#
+Ti 2  0.00000 bsite#
+O  3  0.00000 osite#
 /
 &charge
 charge_neutral=1
@@ -42,9 +42,9 @@ charge_neutral=1
 0 0 1 0 0 0 0 1 0 0 1 0
 0 0 0 0 0 0 0 1 0 0 0 0
 0 0 0 0 0 0 0 1 0 0 0 0
-0 0 1 0 0 0 0 1 0 0 1 0
+1 0 1 0 0 0 0 1 0 0 1 0
 0 0 0 0 0 0 0 1 0 0 0 0
-0 0 1 0 0 0 0 1 0 0 1 0
+1 0 1 0 0 0 0 1 0 0 1 0
 1 1 1 0 0 0 0 0 0 0 0 0
 /
 &lowbound
@@ -92,5 +92,5 @@ charge_neutral=1
 10.0
 /
 &datafile
-systemone IonFor.dat deopt.out dfopt.out dsopt.out#the first system
+systemone IonFor.dat.test deopt.out dfopt.out dsopt.out#the first system
 /

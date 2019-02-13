@@ -118,6 +118,7 @@ void findvalue(std::vector<std::string>& input,std::string key,double& keyvalue)
 	   std::istringstream temp_stream;
 		 std::string flag=input[1];
 	   if(input[0].find(key)!=std::string::npos){
+			 temp_stream.clear();
 				temp_stream.str(flag);
 				temp_stream>>keyvalue;
 				temp_stream.clear();
@@ -127,6 +128,7 @@ void findvalue(std::vector<std::string>& input,std::string key,int& keyvalue){
 	   std::istringstream temp_stream;
 		 std::string flag=input[1];
 	   if(input[0].find(key)!=std::string::npos){
+			 temp_stream.clear();
 				temp_stream.str(flag);
 				temp_stream>>keyvalue;
 				temp_stream.clear();
@@ -203,6 +205,7 @@ void readPT(std::string PTfile){
 	  getline(fs,temp);
 		while(temp.find("/")==std::string::npos){
 			temp=decomment(temp);
+			temp_stream.clear();
 			temp_stream.str(temp);
 			temp_stream>>temp;
 			temp_stream>>fraction;
@@ -226,6 +229,7 @@ void readPT(std::string PTfile){
 		do{
 		temp=decomment(temp);
     if(temp.find_first_not_of("\t\n ")!=std::string::npos){
+			temp_stream.clear();
 			temp_stream.str(temp);
 			temp_stream>>temp;
 			temp_stream>>m;
@@ -303,6 +307,7 @@ void readPT(std::string PTfile){
 						temp=decomment(temp);
 						if(temp.find_first_not_of("\t\n ")!=std::string::npos){
 							control::bvvmatrix[count]=new double[12];
+							temp_stream.clear();
 							temp_stream.str(temp);
 							temp_stream>>tick;
 							temp_stream>>tick;
@@ -377,6 +382,7 @@ void readPT(std::string PTfile){
 		do{
 		temp=decomment(temp);
     if(temp.find_first_not_of("\t\n ")!=std::string::npos){
+		temp_stream.clear();
 		temp_stream.str(temp);
 		temp_stream>>systemname;
 		temp_stream>>systemname;
@@ -443,6 +449,7 @@ void readvmmap(std::fstream &fs){
 	for(size_t i=0;i<pair;i++){
 		control::bvvmatrixmap[i]=new int[12];
 		getline(fs,temp);
+		temp_stream.clear();
 		temp_stream.str(temp);
 		for(size_t j=0;j<12;j++)
 			temp_stream>>control::bvvmatrixmap[i][j];
@@ -453,6 +460,7 @@ void readvmmap(std::fstream &fs){
     * if you ever find better vaiation principle, you can change it!!!!!!!!!!!!!!!!!!!!!!!!
     */
 	control::chargemap=new int [species::spe.size()];
+	temp_stream.clear();
 	temp_stream.str(temp);
 	for(size_t j=0;j<species::spe.size();j++){
 		temp_stream>>control::chargemap[j];

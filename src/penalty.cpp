@@ -1,4 +1,5 @@
 #include "penalty.h"
+#include <iomanip>
 #include "atom.h"
 #include "readpara.h"
 #include "readion.h"
@@ -199,6 +200,7 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
         ionall[i].mdenergy = 0;
         ionall[i].updatebvparameter(control::bvvmatrix);
         ionall[i].computeAll();
+				std::cout<<"the box: "<<i<<" and energy is "<<ionall[i].mdenergy<<std::endl;
     }
 		if(ref_proc==world_rank){
 			ref_energy[0]=ionall[ref_id_proc].mdenergy;			
@@ -220,6 +222,13 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
     PenaltyF = PenaltyF/(number*3*ionall[0].size)*saconst::sa_fweight;
 		penalty = PenaltyE + PenaltyF;
 		double Penaltyall=0.0;
+		double PenaltyE_all=0.0;
+		double PenaltyF_all=0.0;
+		MPI_Reduce(&PenaltyE,&PenaltyE_all,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+		MPI_Reduce(&PenaltyF,&PenaltyF_all,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
 		MPI_Reduce(&penalty,&Penaltyall,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+		if(world_rank==0){
+			std::cout<<"The total Penalty is: "<<Penaltyall<<" Energy Penalty is: "<<PenaltyE_all<<" Force Penalty is: "<<PenaltyF_all<<std::endl;
+		}
     return Penaltyall;
 }

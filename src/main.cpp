@@ -14,6 +14,7 @@ int main(){
 	 readPT("control.PT");
 	 int size_box;
 	 MPI_Barrier(MPI_COMM_WORLD);
+	 /*
    SimulatedAnnealing(&PenaltyFunc,
 			 control::database[0],
 			 control::xop,
@@ -27,7 +28,7 @@ int main(){
 			 control::ub,
 			 control::lb,
 			 control::c);
-	 /*
+	 */
 	 int i=0;
 	 	int world_rank;
 		MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
@@ -36,7 +37,7 @@ int main(){
 	 }
 	clock_t start=clock();
 	double penaltyp;
-	for(size_t k=0;k<100;k++){
+	for(size_t k=0;k<1;k++){
 		penaltyp = PenaltyFunc(control::xop,control::database[i],control::ionsize[i],control::minienergytick[i]);//Zhenbang
 		MPI_Barrier(MPI_COMM_WORLD);
 		if(world_rank==0){
@@ -50,6 +51,5 @@ int main(){
 		 std::cout<<"the penalty is: "<<penaltyp<<std::endl;
 		 std::cout<<"the time used is: "<<(double)(end-start)/CLOCKS_PER_SEC;
 		}
-		*/
 		MPI_Finalize();
 }

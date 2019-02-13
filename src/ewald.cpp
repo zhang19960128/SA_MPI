@@ -76,6 +76,8 @@ void box::computelong(double accuracy_relative){
       gmax++;
       err = rms(ewald_alpha,gmax,p[1],size,q2);
     }
+		ewald_alpha=0.684653;
+		gmax=9;
 		double sigma=1.0/sqrt(2)/ewald_alpha;
 		/****finish esitimate the g_ewald and kmax******/
 		for(size_t i=0;i<size;i++){
@@ -162,14 +164,14 @@ void box::computelong(double accuracy_relative){
 	        /*finish computing real part*/
 							 chargei=chargetype[allatom[i].type];
                 skre=skre+(cskxrx[abs(h)][i]*cskyry[abs(k)][i]*cskzrz[abs(l)][i])*chargei;
+	        			skre=skre-chargei*snkxrx[abs(h)][i]*snkyry[abs(k)][i]*cskzrz[abs(l)][i]*(h>0 ? 1:-1)*(k>0 ? 1:-1);
+								skre=skre-chargei*snkxrx[abs(h)][i]*cskyry[abs(k)][i]*snkzrz[abs(l)][i]*(h>0 ? 1:-1)*(l>0 ? 1:-1);
                 skre=skre-chargei*cskxrx[abs(h)][i]*snkyry[abs(k)][i]*snkzrz[abs(l)][i]*(k>0 ? 1:-1)*(l>0 ? 1:-1);
-	        skre=skre-chargei*snkxrx[abs(h)][i]*cskyry[abs(k)][i]*snkzrz[abs(l)][i]*(h>0 ? 1:-1)*(l>0 ? 1:-1);
-	        skre=skre-chargei*snkxrx[abs(h)][i]*snkyry[abs(k)][i]*cskzrz[abs(l)][i]*(h>0 ? 1:-1)*(k>0 ? 1:-1);
-	        /*start to compute the imaginary part*/
-	        skim=skim+chargei*cskxrx[abs(h)][i]*cskyry[abs(k)][i]*snkzrz[abs(l)][i]*(l>0 ? 1:-1);
-	        skim=skim+chargei*snkxrx[abs(h)][i]*cskyry[abs(k)][i]*cskzrz[abs(l)][i]*(h>0 ? 1:-1);
-	        skim=skim+chargei*cskxrx[abs(h)][i]*snkyry[abs(k)][i]*cskzrz[abs(l)][i]*(k>0 ? 1:-1);
-	        skim=skim-chargei*snkxrx[abs(h)][i]*snkyry[abs(k)][i]*snkzrz[abs(l)][i]*(h>0 ? 1:-1)*(k>0 ? 1:-1)*(l>0 ? 1:-1);
+								/*start to compute the imaginary part*/
+	        			skim=skim+chargei*cskxrx[abs(h)][i]*cskyry[abs(k)][i]*snkzrz[abs(l)][i]*(l>0 ? 1:-1);
+	        			skim=skim+chargei*snkxrx[abs(h)][i]*cskyry[abs(k)][i]*cskzrz[abs(l)][i]*(h>0 ? 1:-1);
+	        			skim=skim+chargei*cskxrx[abs(h)][i]*snkyry[abs(k)][i]*cskzrz[abs(l)][i]*(k>0 ? 1:-1);
+	        			skim=skim-chargei*snkxrx[abs(h)][i]*snkyry[abs(k)][i]*snkzrz[abs(l)][i]*(h>0 ? 1:-1)*(k>0 ? 1:-1)*(l>0 ? 1:-1);
 						 }
           ksq=h*2*pi/p[0]*h*2*pi/p[0]+k*2*pi/p[1]*k*2*pi/p[1]+l*2*pi/p[2]*l*2*pi/p[2];
 		      skmodsq=skre*skre+skim*skim;

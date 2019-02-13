@@ -71,8 +71,8 @@ box::box(atom* inputallatom,
 	bvrcut=new double* [t];/*cut-off for bond valence*/
 	bvvrcut=new double* [t];/*cut-off for bond valence vector*/
 	vv0=new double* [t];/*equlibrium bvv0*/
-    epsilon = new double* [t];
-    bij = new double* [t];
+  epsilon = new double* [t];
+  bij = new double* [t];
 	for(size_t i=0;i<t;i++){
 		r0[i]=new double[t];
 		v0[i]=new double[t];
@@ -82,8 +82,8 @@ box::box(atom* inputallatom,
 		bvrcut[i]=new double[t];
 		bvvrcut[i]=new double[t];
 		vv0[i]=new double[t];
-        epsilon[i] = new double[t];
-        bij[i] = new double[t];
+    epsilon[i] = new double[t];
+    bij[i] = new double[t];
 	}
 	size_t temp=0;
 	double maxcutoff=0.0;
@@ -105,18 +105,18 @@ box::box(atom* inputallatom,
 			bvrcut[j][i]=bvrcut[i][j];
 			bvvrcut[i][j]=pairbvv_input[temp][4];
 			bvvrcut[j][i]=bvvrcut[i][j];
-            epsilon[i][j] = pairlj_input[temp][0];
-            epsilon[j][i] = epsilon[i][j];
-            bij[i][j] = pairlj_input[temp][1];
-            bij[j][i] = bij[i][j];
-            maxcutoff=maxcutoff > bvrcut[i][j] ? maxcutoff : bvrcut[i][j];
+      epsilon[i][j] = pairlj_input[temp][0];
+      epsilon[j][i] = epsilon[i][j];
+      bij[i][j] = pairlj_input[temp][1];
+      bij[j][i] = bij[i][j];
+      maxcutoff=maxcutoff > bvrcut[i][j] ? maxcutoff : bvrcut[i][j];
 			maxcutoff=maxcutoff > ljrcut ? maxcutoff : ljrcut;
-            temp++;
+      temp++;
 		}
 	int virt_size;
 	virtatom=imageall(allatom,size,period,maxcutoff,virt_size);
 	virtsize=virt_size;
-    ljrcut = ljcut;
+  ljrcut = ljcut;
 	stress=new double* [3];
 	for(size_t i=0;i<3;i++){
 		stress[i]=new double [3];
@@ -185,7 +185,7 @@ void box::init(atom* inputallatom,int s,int t,double maxcutoff,double* period,do
 			stressdft[i][j]=stress_dft[i][j];
 		}
 	}
-type=t;//specify how many type are in the simulation
+  type=t;//specify how many type are in the simulation
 	size=s;//specify how many atoms are in the simulation
 	/*should have C(n,2) pair*/
 	r0=new double* [t];/*equilibrium bond length*/
@@ -232,7 +232,7 @@ void box::computeAll(){//zhenbang
     computebvv();
     //computestress();
     computelj();
-    computelong(1e-10);
+    computelong(1e-16);
 		mdenergy=bvenergy+bvvenergy+ljenergy+epsilonenergy;
 }
 
