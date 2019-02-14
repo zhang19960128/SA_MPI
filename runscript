@@ -3,6 +3,6 @@
 #SBATCH -A m1700
 #SBATCH -N 5
 #SBATCH -C haswell
-#SBATCH -t 00:30:00
+#SBATCH -t 00:10:00
 #SBATCH -J haswell
 srun -n 160 ./sa.x

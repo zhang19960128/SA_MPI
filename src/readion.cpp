@@ -9,7 +9,7 @@
 #include <mpi.h>
 #include <math.h>
 /*number is the number of atoms,boxnumber is the how many number of structures are there, ref is the reference structure. cutoff is the cut-off the iteractive force.*/
-box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cutoff){
+box* readion(std::string inputfile,int databasetick,int number,int& boxnumber,int& ref,double cutoff){
 	std::fstream fs;
 	fs.open(inputfile.c_str(),std::fstream::in);
 	std::string line;
@@ -26,6 +26,9 @@ box* readion(std::string inputfile,int number,int& boxnumber,int& ref,double cut
 	 * when garthering information 
 	 * */
 	int world_rank,mpi_size;
+	control::dftenergy[databasetick]=new double [boxnumber];
+	control::mdenergy[databasetick]=new double [boxnumber];
+	control::diffenergy[databasetick]=new double [boxnumber];
 	MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
 	MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
 	int box_ave=floor((flag+0.0000001)/mpi_size);

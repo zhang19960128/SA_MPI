@@ -66,6 +66,9 @@ namespace control{
  std::vector<std::string> deopt;/*output difference energy*/
  std::vector<std::string> dfopt;/*output force difference*/
  std::vector<std::string> dsopt;/*output stress tensor difference*/
+ std::vector<double*> dftenergy;
+ std::vector<double*> mdenergy;
+ std::vector<double*> diffenergy;
 }
 namespace ewaldsum{
 	double cutoff;
@@ -387,6 +390,9 @@ void readPT(std::string PTfile){
 		temp_stream>>systemname;
 		temp_stream>>systemname;
 		control::ionfile.push_back(systemname);
+		control::dftenergy.push_back(NULL);
+		control::mdenergy.push_back(NULL);
+		control::diffenergy.push_back(NULL);
 		temp_stream>>systemname;
 		control::deopt.push_back(systemname);
 		temp_stream>>systemname;
@@ -421,7 +427,7 @@ void readPT(std::string PTfile){
 		int temp_ref;
     box* temp_box;
     for(size_t i=0;i<control::ionfile.size();i++){
-        temp_box=readion(control::ionfile[i],saconst::sa_atom_num,temp_size,temp_ref,ewaldsum::cutoff);
+        temp_box=readion(control::ionfile[i],i,saconst::sa_atom_num,temp_size,temp_ref,ewaldsum::cutoff);
         control::database.push_back(temp_box);
         control::ionsize.push_back(temp_size);
         control::minienergytick.push_back(temp_ref);

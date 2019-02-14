@@ -23,7 +23,7 @@ namespace saconst{
 #define NPAR 12
 #define NEPS 20
 #define EPS 1.0e-6
-void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int), 
+void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int,int), 
 			box* system,
       double *xacc,
 			int    N,//number of parameters to be optimized.
@@ -111,7 +111,7 @@ void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int),
 			/*calculating penalty*/
 			penaltyp=0.0;
 		  for(size_t i=0;i<control::ionsize.size();i++){
-		    penaltyp += PenaltyFunc(xp,control::database[i],control::ionsize[i],control::minienergytick[i]);//Zhenbang
+		    penaltyp += PenaltyFunc(xp,control::database[i],control::ionsize[i],control::minienergytick[i],i);//Zhenbang
           }
 		  nfcnev += 1;
 			if(world_rank==0){
@@ -127,7 +127,10 @@ void SimulatedAnnealing(double (*PenaltyFunc)(double*, box*,int,int),
 			       nnew++;
 				 	   write_opt_parameter(optout);
 		   		   safile<<"  NEW OPTIMUM "<<penaltyOPT<<"\t"<<saiter<<"\t"<<m<<"\t"<<j<<"\t"<<h<<"\t"<<xp[h]<<std::endl;
-					}
+						for(size_t i=0;i<control::ionsize.size();i++){
+							write_defile(i);
+						}
+				}
 		     }
 		   else{
 			/* Metropolis */

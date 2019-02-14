@@ -1,5 +1,6 @@
 #include "penalty.h"
 #include <iomanip>
+#include <new>
 #include "atom.h"
 #include "readpara.h"
 #include "readion.h"
@@ -174,13 +175,12 @@ void mapjiahao(double* xp){
 	};
 
 }
-double PenaltyFunc(double* xp, box* system,int numberone, int index){
+double PenaltyFunc(double* xp, box* system,int numberone, int index,int databasetick){
     int indexRef = index;
     mapjiahao(xp);
     double penalty = 0.0;
     box* ionall = system; 
     int number = numberone;
-    double* totalEnergy = new double[number];
 		int world_rank,mpi_size;
 		MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
 		MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
@@ -195,6 +195,14 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
 			box_size_local=box_ave;
 		}
 		int ref_proc=indexRef%mpi_size;
+		double* mdenergy=new double [number];
+		double* dftenergy=new double [number];
+		double* diffenergy=new double [number];
+		for(size_t i=0;i<number;i++){
+			mdenergy[i]=0.0;
+			dftenergy[i]=0.0;
+			diffenergy[i]=0.0;
+		}
 		int ref_id_proc=floor((indexRef+0.000)/mpi_size);
     for (size_t i=0; i<box_size_local; i++){
         ionall[i].mdenergy = 0;
@@ -212,6 +220,9 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
     double PenaltyF = 0;
     for (size_t i=0; i<box_size_local; i++){
         PenaltyE += fabs((ionall[i].mdenergy-ref_energy[0]) - (ionall[i].dftenergy-ref_energy[1]))*ionall[i].weight;
+				diffenergy[i*mpi_size+world_rank]=fabs((ionall[i].mdenergy-ref_energy[0]) - (ionall[i].dftenergy-ref_energy[1]));
+				dftenergy[i*mpi_size+world_rank]=ionall[i].dftenergy-ref_energy[1];
+				mdenergy[i*mpi_size+world_rank]=ionall[i].mdenergy-ref_energy[0];
 				for (size_t j=0; j<ionall[i].size; j++){
             for (size_t k=0; k<3; k++){
                 PenaltyF += fabs((ionall[i].allatom[j].force[k]-ionall[i].allatom[j].dftforce[k]))*ionall[i].weight; 
@@ -223,8 +234,11 @@ double PenaltyFunc(double* xp, box* system,int numberone, int index){
 		penalty = PenaltyE + PenaltyF;
 		double Penaltyall=0.0;
 		MPI_Reduce(&penalty,&Penaltyall,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-	//	if(world_rank==0){
-	//		std::cout<<"The total Penalty is: "<<Penaltyall<<std::endl;
-	//	}
+		MPI_Reduce(mdenergy,control::mdenergy[databasetick],number,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+		MPI_Reduce(dftenergy,control::dftenergy[databasetick],number,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+		MPI_Reduce(diffenergy,control::diffenergy[databasetick],number,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+		delete [] mdenergy;
+		delete [] dftenergy;
+		delete [] diffenergy;
     return Penaltyall;
 }

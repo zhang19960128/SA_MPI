@@ -82,3 +82,14 @@ void write_opt_parameter(std::fstream& fs){
 	fs<<"(the final site parameter change range is zero due to Charge-Neutral)";
 	fs<<std::endl;
 }
+void write_defile(int databasetick){
+	std::fstream fs;
+	fs.open(control::deopt[databasetick].c_str(),std::fstream::out);
+	fs<<"#Difference(ev)"<<"\t"<<"MD(ev)"<<"\t"<<"DFT(ev)"<<std::endl;
+  int size=0;
+	size=control::ionsize[databasetick];
+	for(size_t i=0;i<size;i++){
+		fs<<std::setw(8)<<std::fixed<<std::setprecision(7)<<control::diffenergy[databasetick][i]<<"\t"<<control::mdenergy[databasetick][i]<<"\t"<<control::dftenergy[databasetick][i]<<std::endl;
+	}
+	fs.close();
+}

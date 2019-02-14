@@ -35,6 +35,9 @@ extern std::vector<int> ionsize;/*store the structure numbers of different files
 extern std::vector<std::string> deopt;
 extern std::vector<std::string> dfopt;
 extern std::vector<std::string> dsopt;
+extern std::vector<double*> dftenergy;
+extern std::vector<double*> mdenergy;
+extern std::vector<double*> diffenergy;
 }
 namespace ewaldsum{
 extern double cutoff;
