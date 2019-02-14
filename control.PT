@@ -41,9 +41,9 @@ charge_neutral=1
 &map
 0 0 1 0 0 0 0 1 0 0 1 0
 0 0 0 0 0 0 0 1 0 0 0 0
-0 0 0 0 0 0 0 1 0 0 0 0
+1 1 0 0 0 0 0 1 0 0 0 0
 0 0 1 0 0 0 0 1 0 0 1 0
-0 0 0 0 0 0 0 1 0 0 0 0
+1 1 0 0 0 0 0 1 0 0 0 0
 0 0 1 0 0 0 0 1 0 0 1 0
 1 1 0 0 0 0 0 0 0 0 0 0
 /
@@ -92,5 +92,6 @@ charge_neutral=1
 10.0
 /
 &datafile
-systemone IonFor.dat deopt.out dfopt.out dsopt.out#the first system
+systemone IonFor.dat deopt.out dfopt.out dsopt.out #the first system
+systemtwo IonFor.dat.test deopt.out1 dfopt.out1 dsopt.out1 #the first system
 /
