@@ -21,7 +21,7 @@ int main(int argc,char* argv[]){
 	out.open(outfile.c_str(),std::fstream::out);
 	std::string temp;
 	int start=0;
-	int end=start+300;
+	int end=start+3000;
 	std::istringstream stream1;
 	std::string substr;
 	double posit;

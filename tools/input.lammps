@@ -1,0 +1,82 @@
+# temperarory input for lammps
+ 
+units     metal
+atom_style full
+boundary p p p
+kspace_style pppm 1.0e-4
+pair_style hybrid/overlay  12lj/cut/coul/long 8.0 8.0 bv 2.0 8.0 bvv 2.0 8.0
+angle_style harmonic
+read_data mixdata.BTO
+#read_restart BTO.restart
+
+
+
+pair_coeff 1 1 12lj/cut/coul/long 2.0 2.6535025
+pair_coeff 1 2 12lj/cut/coul/long 2.0 0.9631027
+pair_coeff 1 3 12lj/cut/coul/long 2.0 2.5410039
+pair_coeff 1 4 12lj/cut/coul/long 2.0 1.9850593
+pair_coeff 2 2 12lj/cut/coul/long 2.0 0.4007231
+pair_coeff 2 3 12lj/cut/coul/long 2.0 2.3023984
+pair_coeff 2 4 12lj/cut/coul/long 2.0 1.9196741
+pair_coeff 3 3 12lj/cut/coul/long 2.0 2.6113934
+pair_coeff 3 4 12lj/cut/coul/long 2.0 1.5856615
+pair_coeff 4 4 12lj/cut/coul/long 2.0 1.9592113
+
+
+#                   r0   Nij    S     v0 rcut
+pair_coeff 1 1 bv 0.0000000 5.0000000 0.5934896 2.0000000 8.0000000
+pair_coeff 1 2 bv 0.0000000 5.0000000 0.0000000 0.0000000 8.0000000
+pair_coeff 1 3 bv 0.0000000 5.0000000 0.0000000 0.0000000 8.0000000
+pair_coeff 1 4 bv 1.8925291 9.1135930 0.0000000 0.0000000 8.0000000
+pair_coeff 2 2 bv 0.0000000 5.0000000 3.2501705 2.0000000 8.0000000
+pair_coeff 2 3 bv 0.0000000 5.0000000 0.0000000 0.0000000 8.0000000
+pair_coeff 2 4 bv 1.7064305 8.6138965 0.0000000 0.0000000 8.0000000
+pair_coeff 3 3 bv 0.0000000 5.0000000 0.1952247 4.0000000 8.0000000
+pair_coeff 3 4 bv 1.8402229 4.5762909 0.0000000 0.0000000 8.0000000
+pair_coeff 4 4 bv 0.0000000 5.0000000 0.8899965 2.0000000 8.0000000
+#                    r0  Nij     S     Bvv0  rcut
+pair_coeff 1 1 bvv 0.0000000 5.0000000 1.2338003 1.1315562 8.0000000
+pair_coeff 1 2 bvv 0.0000000 5.0000000 0.0000000 0.0000000 8.0000000
+pair_coeff 1 3 bvv 0.0000000 5.0000000 0.0000000 0.0000000 8.0000000
+pair_coeff 1 4 bvv 1.8925291 9.1135930 0.0000000 0.0000000 8.0000000
+pair_coeff 2 2 bvv 0.0000000 5.0000000 0.1348667 4.6030174 8.0000000
+pair_coeff 2 3 bvv 0.0000000 5.0000000 0.0000000 0.0000000 8.0000000
+pair_coeff 2 4 bvv 1.7064305 8.6138965 0.0000000 0.0000000 8.0000000
+pair_coeff 3 3 bvv 0.0000000 5.0000000 0.0006145 8.9528580 8.0000000
+pair_coeff 3 4 bvv 1.8402229 4.5762909 0.0000000 0.0000000 8.0000000
+pair_coeff 4 4 bvv 0.0000000 5.0000000 0.0271587 1.8624550 8.0000000
+
+
+neighbor        2.0 bin
+neigh_modify    every 1
+# time unit ps
+timestep         0.001
+
+#group Pb id 1:512
+#group Ti id 513:1024
+#group O1 id 1025:1536
+#group O2 id 1537:2048
+#group O3 id 2049:2560
+thermo          100
+thermo_style custom step temp eangle etotal press vol lx ly lz
+thermo_modify line one format float %12.5f
+
+
+fix 1 all nvt temp 100.0 100.0 1.0
+run 50000
+unfix 1
+
+fix 2 all npt temp 100.0 100.0 1.0 aniso 1.01325 1.01325 5.0
+run 50000
+unfix 2
+
+fix 3 all nvt temp 200.0 200.0 1.0
+run 50000
+unfix 3
+
+fix 4 all npt temp 200.0 200.0 1.0 aniso 1.01325 1.01325 5.0
+dump 4 all custom 200 dump.xyz x y z
+dump_modify 4 sort id
+run 250000
+unfix 4
+

@@ -1,7 +1,9 @@
 #/bin/bash
 tempfile="temp_file.txt";
-tac control.opt | grep -B30 -m1 "Potential parameters" | tac | grep -v "Potential parameters" >$tempfile;
-line=`tac control.opt | grep -B30 -m1 "Potential parameters" | tac | grep -v "Potential parameters" | wc -l`;
+optfile="opt.out";
+tac $optfile | grep -B30 -m1 "new-optimized" | tac | grep -v "new-optimized" >$tempfile;
+tac $optfile | grep -B30 -m1 "new-optimized" | tac | grep -v "new-optimized"
+echo $line
 if [ $line == 28 ]
 then
 	sub=8
