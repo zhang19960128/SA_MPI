@@ -9,9 +9,9 @@
 #include "sa.h"
 #include <mpi.h>
 #include <time.h>
-int main(){
+int main(int argc,char* argv[]){
 	 MPI_Init(NULL,NULL);
-	 readPT("control.PT");
+	 readPT(argv[1]);
 	 int size_box;
 	 MPI_Barrier(MPI_COMM_WORLD);
    SimulatedAnnealing(&PenaltyFunc,
