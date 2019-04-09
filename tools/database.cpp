@@ -3,13 +3,13 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 #include <vector>
 int main(int argc,char* argv[]){
 	int interval=1;
 	std::string dftoutfile=argv[1];
-	std::string outfile="IonFor.dat.MD.jiahao";
-	int natom=40;
-	int nline=41;
+	std::string outfile=argv[2];
+	int natom=48;
 	/*units that are useful*/
 	double bohr=0.529177249;
 	double ha=27.2113845;
@@ -20,8 +20,8 @@ int main(int argc,char* argv[]){
 	std::fstream out;
 	out.open(outfile.c_str(),std::fstream::out);
 	std::string temp;
-	int start=0;
-	int end=start+3000;
+	int start=std::atoi(argv[3]);
+	int end=start+8000;
 	std::istringstream stream1;
 	std::string substr;
 	double posit;
@@ -29,6 +29,14 @@ int main(int argc,char* argv[]){
 	std::vector<std::vector<double> > v3(3,v1);
 	std::vector<std::vector<double> > pressure(3,v1);
 	std::vector<std::vector<double> > force(natom,v1);
+    for(size_t i=0;i<3;i++)
+        for(size_t j=0;j<3;j++){
+            if(i!=j)
+                v3[i][j]=0;
+        }
+    v3[0][0]=8.9258090014;
+    v3[1][1]=8.9258090014;
+    v3[2][2]=12.623000144;
 	double total_energy;
 	do{
 		getline(dftout,temp);
@@ -43,7 +51,7 @@ int main(int argc,char* argv[]){
 		}
 		else if(temp.find("Forces acting on atoms (cartesian axes, Ry/au):")!=std::string::npos){
 			getline(dftout,temp);
-			for(size_t i=0;i<40;i++){
+			for(size_t i=0;i<natom;i++){
 			getline(dftout,temp);
 			stream1.str(temp);
 			stream1>>substr;//atom
@@ -136,7 +144,8 @@ out<<"******* Lattice unit vectors"<<std::endl;
 			 stream1>>substr;
 			 for(size_t j=0;j<3;j++){
 			 	stream1>>posit;
-				posit=posit/v3[j][j];
+				posit=posit;//v3[j][j];
+				/*
 				if(posit<0){
 					posit=posit+1;
 				}
@@ -144,6 +153,7 @@ out<<"******* Lattice unit vectors"<<std::endl;
 					posit=posit-1;
 				}
 				else posit=posit;
+				*/
 				out<<std::fixed<<std::setprecision(15)<<std::setw(15)<<posit<<"\t";
 			 }
 			 out<<std::endl;
