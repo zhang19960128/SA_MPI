@@ -83,7 +83,7 @@ int main(int argc,char* argv[]){
 		}
 		else if(temp=="ATOMIC_POSITIONS (crystal)"){
 		out<<"******* Reduced ionic position : "<<start<<std::endl;
-		for(size_t i=0;i<40;i++){
+		for(size_t i=0;i<natom;i++){
 			 getline(dftout,temp);
 			 stream1.str(temp);
 			 stream1>>substr;
@@ -130,7 +130,7 @@ out<<"******* Lattice unit vectors"<<std::endl;
 		}
 		else if(temp=="ATOMIC_POSITIONS (angstrom)"){
 			out<<"******* Reduced ionic position : "<<start<<std::endl;
-	  	for(size_t i=0;i<40;i++){
+	  	for(size_t i=0;i<natom;i++){
 			 getline(dftout,temp);
 			 stream1.str(temp);
 			 stream1>>substr;
