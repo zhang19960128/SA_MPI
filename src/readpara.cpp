@@ -203,7 +203,7 @@ void readPT(std::string PTfile){
 	std::cout<<"alpha for ewald is "<<ewaldsum::alpha<<std::endl;
 	}
 	getline(fs,temp);
-	int fraction;
+	double fraction;
 	if(temp.find("&chemical_formula")!=std::string::npos){
 	  getline(fs,temp);
 		while(temp.find("/")==std::string::npos){
@@ -427,7 +427,7 @@ void readPT(std::string PTfile){
 		int temp_ref;
     box* temp_box;
     for(size_t i=0;i<control::ionfile.size();i++){
-        temp_box=readion(control::ionfile[i],i,saconst::sa_atom_num,temp_size,temp_ref,ewaldsum::cutoff);
+        temp_box=readion(control::ionfile[i],i,temp_size,temp_ref,ewaldsum::cutoff);
         control::database.push_back(temp_box);
         control::ionsize.push_back(temp_size);
         control::minienergytick.push_back(temp_ref);
@@ -486,7 +486,7 @@ void readvmmap(std::fstream &fs){
 		std::cout<<std::endl;
 	}
 	}
-	for(size_t i=0;i<3;i++){
+	for(size_t i=0;i<control::site_name.size();i++){
 		control::para_site_charge_change.push_back(0);
 		control::para_site_charge.push_back(0.0);
 	}
@@ -496,26 +496,23 @@ void readvmmap(std::fstream &fs){
 		control::para_site_charge[species::site[j]]=control::charge[j];
 	}
 	if(world_rank==0){
-	for(size_t j=0;j<3;j++){
+	for(size_t j=0;j<control::site_name.size();j++){
 		std::cout<<"the site: "<<j<<" :"<<"{{charge change(1) or not(0):}} "<<control::para_site_charge_change[j]<<" the starting charge is: "<<control::para_site_charge[j]<<std::endl;
 	}
 	}
 	int temp_sum=0;
-	for(size_t i=0;i<3;i++){
+	for(size_t i=0;i<control::site_name.size();i++){
 		temp_sum=temp_sum+control::para_site_charge_change[i];
 	}
-	if(temp_sum==3){
-		control::paracount_charge=control::neutral==1 ? temp_sum-1:temp_sum;
-	}
-	else if(temp_sum==2){
-		control::paracount_charge=control::neutral==1 ? temp_sum-1:temp_sum;
+	if(temp_sum==0){
+		control::paracount_charge=0;
 	}
 	else if(temp_sum==1){
 		std::cout<<"ONLY ONE SITE CHARGE CHANGE"<<std::endl;
 		exit(EXIT_FAILURE);
 	}
-	else if(temp_sum==0){
-		control::paracount_charge=0;
+	else{
+		control::paracount_charge=control::neutral==1 ? temp_sum-1:temp_sum;
 	}
     /*We only consider all the site charge change or all the site charge not change*/
   /*

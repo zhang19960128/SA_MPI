@@ -122,7 +122,7 @@ void map(double* xp){
     }
     delete[] siteID;
 }
-
+/*
 //Zhenbang
 void mapToXp(double* xp){
     int count = 0;
