@@ -132,8 +132,8 @@ int main(int argc,char* argv[]){
 		}
 		do{
 						getline(dftout,temp);
-		}while(temp.find("Forces acting on atoms (cartesian axes, Ry/au):")==std::string::npos && !dftout.eof());
-		if(temp.find("Forces acting on atoms (cartesian axes, Ry/au):")!=std::string::npos){	
+		}while(temp.find("Forces acting on atoms")==std::string::npos && !dftout.eof());
+		if(temp.find("Forces acting on atoms")!=std::string::npos){	
 			F_signal=1;
 			getline(dftout,temp);
 			for(size_t i=0;i<natom;i++){
@@ -208,9 +208,9 @@ int main(int argc,char* argv[]){
 		}
 		do{
 						getline(dftout,temp);
-		}while(temp.find("Forces acting on atoms (cartesian axes, Ry/au):")==std::string::npos && !dftout.eof());
-		if(temp.find("Forces acting on atoms (cartesian axes, Ry/au):")!=std::string::npos){	
-		getline(dftout,temp);
+		}while(temp.find("Forces acting on atoms")==std::string::npos && !dftout.eof());
+		if(temp.find("Forces acting on atoms")!=std::string::npos){	
+		        getline(dftout,temp);
 			for(size_t i=0;i<natom;i++){
 			getline(dftout,temp);
 			stream1.str(temp);
