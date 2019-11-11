@@ -1,4 +1,5 @@
 #include "atom.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include "image.h"
 #include <new>
@@ -46,7 +47,7 @@ box::box(){
 box::box(atom* inputallatom,
 		int t,
 		int s,
-		double* period,
+		double** period,
 		double** pairbv_input,
 		double** pairbvv_input,
         double** pairlj_input,
@@ -54,10 +55,13 @@ box::box(atom* inputallatom,
         ){
 	/*this paribv_input should be similar to lammps input*/
 	/*this paribvv_input should be similar to lammps input*/
-	p=new double [3];
-	for(size_t i=0;i<3;i++){
-		p[i]=period[i];
-	}
+	p=new double* [3];
+  for(size_t i=0;i<3;i++){
+    p[i]=new double [3];
+    for(size_t j=0;j<3;j++){
+      p[i][j]=period[i][j];
+    }
+  }
 	allatom=new atom[s];
 	std::copy(inputallatom,inputallatom+s,allatom);
 	type=t;//specify how many type are in the simulation
@@ -168,10 +172,15 @@ void box::updatebvparameter(double** input){
 	  	temp++;
 		}
 }
-void box::init(atom* inputallatom,int s,int t,double maxcutoff,double* period,double** input,double dft_energy,double** stress_dft,double w){
-	p=new double[3];
+void box::init(atom* inputallatom,int s,int t,double maxcutoff,double** period,double** input,double dft_energy,double** stress_dft,double w){
+	p=new double* [3];
+  for(size_t i=0;i<3;i++){
+    p[i]=new double[3];
+  }
 	for(size_t i=0;i<3;i++){
-		p[i]=period[i];
+   for(size_t j=0;j<3;j++){
+		p[i][j]=period[i][j];
+    }
 	}
 	allatom=new atom[s];
 	std::copy(inputallatom,inputallatom+s,allatom);
@@ -228,12 +237,14 @@ void box::freezeforce(){
 }
 void box::computeAll(){//zhenbang
     freezeforce();
-    computebv();
-    computebvv();
-    //computestress();
-    computelj();
+//    computebv();
+//    computebvv();
+//    //computestress();
+//    computelj();
     computelong(1e-10);
-		mdenergy=bvenergy+bvvenergy+ljenergy+epsilonenergy;
+//		mdenergy=bvenergy+bvvenergy+ljenergy+epsilonenergy;
+    std::cout<<"the energy is: "<<epsilonenergy<<std::endl;
+    exit(EXIT_FAILURE);
 }
 
 void box::printnei(int i){

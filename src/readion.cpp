@@ -50,7 +50,10 @@ box* readion(std::string inputfile,int databasetick,int& boxnumber,int& ref,doub
 	}
 	box* ionall=new box[box_size_local];
 	atom* atomconfig;
-	double* period=new double[3];
+	double** period=new double*[3];
+  for(size_t i=0;i<3;i++){
+    period[i]=new double[3];
+  }
 	double** stress_dft;
 	double dftenergy;
 	double weight;
@@ -91,17 +94,33 @@ box* readion(std::string inputfile,int databasetick,int& boxnumber,int& ref,doub
 		/*reading atomic positions*/
 			for(size_t k=0;k<3;k++){
 				stream1>>atomconfig[j].position[k];
+        atomconfig[j].crystal_position[k]=atomconfig[j].position[k];
 			}
 			stream1.clear();
 			/*end reading that*/
 		}
+    for(size_t i=0;i<number;i++){
+     while(atomconfig[i].crystal_position[0]<0 || atomconfig[i].crystal_position[0]>1){
+      if(atomconfig[i].crystal_position[0]<0) atomconfig[i].crystal_position[0]=atomconfig[i].crystal_position[0]+1.0;
+      if(atomconfig[i].crystal_position[0]>1) atomconfig[i].crystal_position[0]=atomconfig[i].crystal_position[0]-1.0;
+      if(atomconfig[i].crystal_position[1]<0) atomconfig[i].crystal_position[1]=atomconfig[i].crystal_position[1]+1.0;
+      if(atomconfig[i].crystal_position[1]>1) atomconfig[i].crystal_position[1]=atomconfig[i].crystal_position[1]-1.0;
+      if(atomconfig[i].crystal_position[2]<0) atomconfig[i].crystal_position[0]=atomconfig[i].crystal_position[2]+1.0;
+      if(atomconfig[i].crystal_position[2]>1) atomconfig[i].crystal_position[0]=atomconfig[i].crystal_position[2]-1.0;
+     }
+     for(size_t j=0;j<3;j++){
+      atomconfig[i].position[j]=atomconfig[i].crystal_position[j];
+      atomconfig[i].crystal_position[j]=atomconfig[i].crystal_position[j]-0.5;
+     }
+    }
+
 		getline(fs,line);
 		/*reading periodical boudary condition*/
 		for(size_t k=0;k<3;k++){
 				getline(fs,line);
 				stream1.str(line);
-				for(size_t m=0;m<=k;m++){
-						stream1>>period[k];
+				for(size_t m=0;m<3;m++){
+						stream1>>period[k][m];
 				}
 				stream1.clear();
 			}
@@ -148,9 +167,14 @@ box* readion(std::string inputfile,int databasetick,int& boxnumber,int& ref,doub
 		getline(fs,line);
 		stream1.str(line);
 		stream1>>weight;
+    double atom_position_work[3]={0.0,0.0,0.0};
 		for(size_t i=0;i<number;i++){
-			for(size_t j=0;j<3;j++){
-				atomconfig[i].position[j]=atomconfig[i].position[j]*period[j];
+			for(size_t j=0;j<3;j++){//( loop x y z)
+         atom_position_work[j]=0.0;
+         for(size_t k=0;k<3;k++){//( loop over x y z)
+				    atom_position_work[j]+=atomconfig[i].position[k]*period[k][j];
+        }
+        atomconfig[i].position[j]=atom_position_work[j];
 			}
 			atomconfig[i].type=type_tick[i];
 		}
@@ -160,6 +184,9 @@ box* readion(std::string inputfile,int databasetick,int& boxnumber,int& ref,doub
 		}
 		delete [] atomconfig;
 	}
+  for(size_t i=0;i<3;i++){
+    delete [] period[i];
+  }
 	delete [] period;
 	delete [] type_tick;
   return ionall;
