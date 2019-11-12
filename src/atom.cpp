@@ -243,12 +243,7 @@ void box::computeAll(){//zhenbang
     computelj();
     computelong(1e-6);
 		mdenergy=bvenergy+bvvenergy+ljenergy+epsilonenergy;
-    std::cout<<"the MD energy is: "<<mdenergy<<std::endl;
-    for(size_t i=0;i<size;i++){
-    std::cout<<allatom[i].force[0]<<" "<<allatom[i].force[1]<<" "<<allatom[i].force[2]<<std::endl;
     }
-    exit(EXIT_FAILURE);
-}
 
 void box::printnei(int i){
    for(std::list<int>::iterator a=allatom[i].neibv.begin();a!=allatom[i].neibv.end();a++){
