@@ -237,13 +237,16 @@ void box::freezeforce(){
 }
 void box::computeAll(){//zhenbang
     freezeforce();
-//    computebv();
-//    computebvv();
+    computebv();
+    computebvv();
 //    //computestress();
-//    computelj();
+    computelj();
     computelong(1e-10);
-//		mdenergy=bvenergy+bvvenergy+ljenergy+epsilonenergy;
-    std::cout<<"the energy is: "<<epsilonenergy<<std::endl;
+		mdenergy=bvenergy+bvvenergy+ljenergy+epsilonenergy;
+    std::cout<<mdenergy<<std::endl;
+    for(size_t i=0;i<size;i++){
+    std::cout<<allatom[i].force[0]<<" "<<allatom[i].force[1]<<" "<<allatom[i].force[2]<<std::endl;
+    }
     exit(EXIT_FAILURE);
 }
 
