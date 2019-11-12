@@ -31,14 +31,14 @@ void init_cell (double** H)
     /* Because H is assumed to be coming from Fortran */
     /* we have to do a little conversion */
     h11 = H[0][0];  /* 1st element */
-    h12 = H[1][0];  /* 4th element */
-    h13 = H[2][0];  /* 7th element */
-    h21 = H[0][1];  /* 2nd element */
+    h12 = H[0][1];  /* 4th element */
+    h13 = H[0][2];  /* 7th element */
+    h21 = H[1][0];  /* 2nd element */
     h22 = H[1][1];  /* 5th element */
-    h23 = H[2][1];  /* 8th element */
-    h31 = H[0][2];  /* 3rd element */
-    h32 = H[1][2];  /* 6th element */
-    h33 = H[2][2];  /* 9th element */
+    h23 = H[1][2];  /* 8th element */
+    h31 = H[2][0];  /* 3rd element */
+    h32 = H[2][1];  /* 6th element */
+    h33 = H[2][2];  /* 9th element */    
     /* Get the reciprocal lattice vectors */
     /*calculated using Mathematica*/
     g11=(-(h23*h32) + h22*h33)/(-(h13*h22*h31) + h12*h23*h31 + h13*h21*h32 -h11*h23*h32 - h12*h21*h33 + h11*h22*h33);

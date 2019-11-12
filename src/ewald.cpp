@@ -31,13 +31,13 @@ void init_cell (double** H)
     /* Because H is assumed to be coming from Fortran */
     /* we have to do a little conversion */
     h11 = H[0][0];  /* 1st element */
-    h12 = H[1][0];  /* 4th element */
-    h13 = H[2][0];  /* 7th element */
-    h21 = H[0][1];  /* 2nd element */
+    h12 = H[0][1];  /* 4th element */
+    h13 = H[0][2];  /* 7th element */
+    h21 = H[1][0];  /* 2nd element */
     h22 = H[1][1];  /* 5th element */
-    h23 = H[2][1];  /* 8th element */
-    h31 = H[0][2];  /* 3rd element */
-    h32 = H[1][2];  /* 6th element */
+    h23 = H[1][2];  /* 8th element */
+    h31 = H[2][0];  /* 3rd element */
+    h32 = H[2][1];  /* 6th element */
     h33 = H[2][2];  /* 9th element */
     /* Get the reciprocal lattice vectors */
     /*calculated using Mathematica*/
@@ -138,10 +138,6 @@ void box::computelong(double accuracy_relative){
   ewald_alpha=0.684653;
 	double sigma=1.0/sqrt(2)/ewald_alpha;
   double rij;
- std::cout<<" max_g1: max_g2: max_g3: "<<max_g1<<" "<<max_g2<<" "<<max_g3<<std::endl;
-    max_g1=10;
-    max_g2=10;
-    max_g3=10;
 		/****finish esitimate the g_ewald and kmax******/
 		for(int  i=0;i<size;i++){
        xall[i]=allatom[i].position[0];
@@ -235,10 +231,6 @@ void box::computelong(double accuracy_relative){
     }
     /*An alternative way to calculate it for your convinience*/
 		epsilonenergy=selfe+ShortRange+LongRange;
-    std::cout<<"after the ewald summation: total energy is: "<<epsilonenergy<<std::endl;
-    for(size_t m=0;m<size;m++){
-      std::cout<<fx[m]<<" "<<fy[m]<<" "<<fz[m]<<std::endl;
-    }
 /*delete all the pointers*/
      for(size_t i=0;i<2*max_g1+1;i++){
       for(size_t j=0;j<2*max_g2+1;j++){
