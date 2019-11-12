@@ -1,5 +1,4 @@
 #include "atom.h"
-#include <ctime>
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
@@ -65,9 +64,7 @@ double rms(double g_ewald,int km,double prd,int size,double q2){
 	return value;
 }
 void box::computelong(double accuracy_relative){
-    std::clock_t start,end;
     double duration;
-    start = std::clock();
     double ShortRange = 0;
     double LongRange = 0;
     double selfe = 0;
@@ -206,32 +203,40 @@ void box::computelong(double accuracy_relative){
     double prefactor=1/2/volume/epsil;
        /*refer to the notes on OneNote Simulated Annealing,m is the index m in the node, t is the index j in the node*/
     double sinkdotrm,sinkdotrj,coskdotrm,coskdotrj;
-    for(size_t m=0;m<size;m++){
+    double SQ_real,SQ_imag;//Define SQ=Sigma qi x exp(ikr);
       /*this loop calculate all the forces on each atom and simutaneousl calculate the long Range energy*/
-      for(size_t t=0;t<size;t++){
          for(int i=-max_g1;i<=max_g1;i++){
           for(int j=-max_g2;j<=max_g2;j++){
             for(int k=-max_g3;k<=max_g3;k++){
               if(i==0 && j==0 && k==0) continue;
+               SQ_real=0.0;
+               SQ_imag=0.0;
               ksq=compute_ksq(i,j,k);
               ksq=(2*PI)*(2*PI)*ksq;
+               for(size_t m=0;m<size;m++){
+                 SQ_real=SQ_real+q[m]*coskdotr[i+max_g1][j+max_g2][k+max_g3][m];
+                 SQ_imag=SQ_imag+q[m]*sinkdotr[i+max_g1][j+max_g2][k+max_g3][m];
+               }
               prefactor=1.0/2/volume/epsil*exp(-ksq*sigma*sigma/2.0)/ksq;
+              LongRange=LongRange+prefactor*(SQ_real*SQ_real+SQ_imag*SQ_imag);
+               for(size_t m=0;m<size;m++){
               sinkdotrm=sinkdotr[i+max_g1][j+max_g2][k+max_g3][m];
               coskdotrm=coskdotr[i+max_g1][j+max_g2][k+max_g3][m];
-              sinkdotrj=sinkdotr[i+max_g1][j+max_g2][k+max_g3][t];
-              coskdotrj=coskdotr[i+max_g1][j+max_g2][k+max_g3][t];
-              LongRange=LongRange+prefactor*q[m]*q[t]*(coskdotrm*coskdotrj+sinkdotrm*sinkdotrj);
-              fx[m]=fx[m]+2*prefactor*q[m]*q[t]*2*PI*(i*g11+j*g21+k*g31)*(sinkdotrm*coskdotrj-coskdotrm*sinkdotrj);
-              fy[m]=fy[m]+2*prefactor*q[m]*q[t]*2*PI*(i*g12+j*g22+k*g32)*(sinkdotrm*coskdotrj-coskdotrm*sinkdotrj);
-              fz[m]=fz[m]+2*prefactor*q[m]*q[t]*2*PI*(i*g13+j*g23+k*g33)*(sinkdotrm*coskdotrj-coskdotrm*sinkdotrj);
+              fx[m]=fx[m]-prefactor*2*PI*(i*g11+j*g21+k*g31)*2*q[m]*(coskdotrm*SQ_imag-sinkdotrm*SQ_real);
+              fy[m]=fy[m]-prefactor*2*PI*(i*g12+j*g22+k*g32)*2*q[m]*(coskdotrm*SQ_imag-sinkdotrm*SQ_real);
+              fz[m]=fz[m]-prefactor*2*PI*(i*g13+j*g23+k*g33)*2*q[m]*(coskdotrm*SQ_imag-sinkdotrm*SQ_real);
             }
-          }
-         }
+           }
+        }
       }
-    }
     /*An alternative way to calculate it for your convinience*/
 		epsilonenergy=selfe+ShortRange+LongRange;
 /*delete all the pointers*/
+   for(size_t i=0;i<size;i++){
+    allatom[i].force[0]+=fx[i];
+    allatom[i].force[1]+=fy[i];
+    allatom[i].force[2]+=fz[i];
+   }
      for(size_t i=0;i<2*max_g1+1;i++){
       for(size_t j=0;j<2*max_g2+1;j++){
         for(size_t k=0;k<2*max_g3+1;k++){
@@ -257,8 +262,5 @@ void box::computelong(double accuracy_relative){
     delete [] s2;
     delete [] s3;
     delete [] q;
-    end=std::clock();
-    duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-    std::cout << "Operation took "<< duration << "seconds" << std::endl;
     /*end memory allocation*/
 }
