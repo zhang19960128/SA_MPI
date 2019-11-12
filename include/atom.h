@@ -7,6 +7,7 @@
 #define epsilon_lj 2.0
 typedef struct Atom{
 	double position[3];
+  double crystal_position[3];
 	double force[3];//MD force.
 	double dftforce[3];//DFT force.
 	double charge;//epsilonumb charge
@@ -30,13 +31,13 @@ class box{
 		box(atom* inputallatom,
 				int t,//type numbers
 				int s,//total number of atoms
-				double* period,
+				double** period,
 				double** pairbv_input,
 				double** pairbvv_input,
 				double** pairlj_input,
                 double ljcut=8.0
         );
-		void init(atom* inputallatom,int s,int t,double maxcutoff,double* period,double** input,double dft_energy,double** stress_dft,double w);
+		void init(atom* inputallatom,int s,int t,double maxcutoff,double** period,double** input,double dft_energy,double** stress_dft,double w);
 		void settype(std::vector<int>& t);
 		void freezeforce();/*freeze force for other people to calculate accumulative force*/
 		void updatelistbv();/*update once and use forever, big trick*/
@@ -88,7 +89,7 @@ class box{
 		};
 	private:
 		int virtsize;//store how many image atoms are there.
-		double* p;//store the periodical boundary condition.
+		double** p;//store the periodical boundary condition.
 		atom* allatom;//store the atom array.
 		int size;//store how many atoms are in the simulation box.
 		int type;//store how many types of atoms are in the simulation box.

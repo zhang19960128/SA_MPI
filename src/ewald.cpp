@@ -132,7 +132,7 @@ void box::computelong(double accuracy_relative){
       max_g3++;
       err = rms(ewald_alpha,max_g3,p[2][2],size,q2);
     }
-  ewald_alpha=0.684653;
+  //ewald_alpha=0.684653;
 	double sigma=1.0/sqrt(2)/ewald_alpha;
   double rij;
 		/****finish esitimate the g_ewald and kmax******/
