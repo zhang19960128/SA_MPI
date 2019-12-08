@@ -171,11 +171,13 @@ box* readion(std::string inputfile,int databasetick,int& boxnumber,int& ref,doub
 		for(size_t i=0;i<number;i++){
 			for(size_t j=0;j<3;j++){//( loop x y z)
          atom_position_work[j]=0.0;
-         for(size_t k=0;k<3;k++){//( loop over x y z)
-				    atom_position_work[j]+=atomconfig[i].position[k]*period[k][j];
+         for(size_t k=0;k<3;k++){//( loop over crystal)
+				    atom_position_work[j]=atom_position_work[j]+atomconfig[i].position[k]*period[k][j];
         }
-        atomconfig[i].position[j]=atom_position_work[j];
 			}
+            for(size_t j=0;j<3;j++){
+            atomconfig[i].position[j]=atom_position_work[j];
+            }
 			atomconfig[i].type=type_tick[i];
 		}
 		if(tick%mpi_size==world_rank){
