@@ -115,13 +115,12 @@ int main(){
 	fs<<axis[1][0]*cell<<" "<<axis[2][0]*cell<<" "<<axis[2][1]*cell<<" xy xz yz\n";
 	fs<<"\n";
 	fs<<"\n";
-	fs<<"Atoms\n";
-	fs<<"\n";
 	fs<<"Masses\n";
 	fs<<"\n";
 	fs<<"1 208.98 #Bi\n";
 	fs<<"2 55.845 #Fe\n";
 	fs<<"3 15.9999 #O\n";
+	fs<<"\n";
 	fs<<"Atoms\n";
 	fs<<"\n";
 	for(int k=0;k<cell;k++)
@@ -134,24 +133,24 @@ int main(){
 		for(int j=0;j<cell;j++)
 			for(int i=0;i<cell;i++){
 			coord=coordinate(i+0.250196608,j+0.277942506,k+0.285637675,axis);
-			fs<<i+j*cell+k*cell*cell+1+cell*cell*cell<<" "<<1<<" "<<2<<" "<<bsitecharge<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<std::endl;
+			fs<<i+j*cell+k*cell*cell+1+cell*cell*cell<<" "<<1<<" "<<2<<" "<<bsitecharge<<" "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<std::endl;
 			}
 	for(int k=0;k<cell;k++)
 		for(int j=0;j<cell;j++)
 			for(int i=0;i<cell;i++){
 			coord=coordinate(i+0.25,j+0.295163605,k+0.088030717,axis);
-			fs<<i+j*cell+k*cell*cell+1+cell*cell*cell*2<<" "<<1<<" "<<3<<" "<<ositecharge<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<std::endl;
+			fs<<i+j*cell+k*cell*cell+1+cell*cell*cell*2<<" "<<1<<" "<<3<<" "<<ositecharge<<" "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<std::endl;
 			}
 	for(int k=0;k<cell;k++)
 		for(int j=0;j<cell;j++)
 			for(int i=0;i<cell;i++){
 			coord=coordinate(i+0.25,j+0.027278961,k+0.351475630,axis);
-			fs<<i+j*cell+k*cell*cell+1+cell*cell*cell*3<<" "<<1<<" "<<3<<" "<<ositecharge<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<std::endl;
+			fs<<i+j*cell+k*cell*cell+1+cell*cell*cell*3<<" "<<1<<" "<<3<<" "<<ositecharge<<" "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<std::endl;
 			}
 	for(int k=0;k<cell;k++)
 		for(int j=0;j<cell;j++)
 			for(int i=0;i<cell;i++){
 			coord=coordinate(i+0.000000221,j+0.278355902,k+0.355330868,axis);
-			fs<<i+j*cell+k*cell*cell+1+cell*cell*cell*4<<" "<<1<<" "<<3<<" "<<ositecharge<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<std::endl;
+			fs<<i+j*cell+k*cell*cell+1+cell*cell*cell*4<<" "<<1<<" "<<3<<" "<<ositecharge<<" "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<std::endl;
 			}
 }
