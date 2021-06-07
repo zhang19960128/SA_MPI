@@ -17,7 +17,7 @@ int main(int argc,char* argv[]){
    SimulatedAnnealing(&PenaltyFunc,
 			 control::database[0],
 			 control::xop,
-			 control::paracount_bvv+control::paracount_charge,
+			 control::paracount_bvv+control::independentcharge,
 			 saconst::sa_nt,
 			 saconst::sa_ns,
 			 saconst::sa_max,

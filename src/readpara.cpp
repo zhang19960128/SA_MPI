@@ -43,22 +43,17 @@ namespace control{
  double* vm;/*ub - lb*/
  double* c;/*all values are 2.0*/
  double* charge;/*it's the same length as input species*/
- int* chargemap;/*only maps the asite, bsite, osite charge, so it's length is 3*/
+ int independentcharge;
+ double* chargexp;
+ double** chargemap;/*charge map matrix*/
  int* type;/*type matrix*/
  int pair_num;/*how many pair of parameteres in BVV*/
  int paracount_bvv;/*count how many parameteres that need to change in bvv*/
- int paracount_charge;/*count how many parameters that need to change in charge*/
- std::vector<int> para_site_charge_change;/*store the signal whether this site charge change*/
- std::vector<double> para_site_charge;/*store the charge of this site*/
  std::vector<std::string> site_name;/*store the name of this site*/
  std::vector<double> chemical_formula;/*store the chemical formula of this site*/
  double* xop;/*map the all simulation optimized parameter to one line array*/
- /*******************************for fast map************************/
  std::vector<std::vector<int> > mapXpTickToBvvTick;/*fast map the index in xp to BvvMatrix map*/
  std::vector<std::vector<int> > mapXpTickToChargeTick;/*fast map the index in xp to para_site_charge_change*/
- int lastchargetick;/*store the last tick of charge change due to charge-neutral*/
- /***********************************************************************/
- int neutral;/*bool value to show whether you want to force charge neutral*/
  std::vector<std::string> ionfile;/*how many ionfiles are there*/
  std::vector<box*> database;/*the box* data to optimized*/
  std::vector<int> minienergytick;/*store the minimum energy of this Ion files*/
@@ -279,28 +274,11 @@ void readPT(std::string PTfile){
 	}
 	std::cout<<std::endl;
 	}
-	getline(fs,temp);
-	if(temp.find("&charge")!=std::string::npos){
-		do{
-		  getline(fs,temp);
-			if(temp.find("charge_neutral")!=std::string::npos){
-			input=split(temp,"=");
-			findvalue(input,"charge_neutral",control::neutral);
-			}
-		}while(temp.find("/")==std::string::npos);
-	}
-	if(world_rank==0){
-	if(control::neutral==1){
-		std::cout<<"=========================================================FORCE CHARGE NEUTRAL==========================================="<<std::endl;
-	}
-	else{
-		std::cout<<"=================================WARNING!!!!CHARGE NOT NEUTRAL, MAKE SURE THIS IS WAHT YOU WANT========================="<<std::endl;
-	}
-	}
-	getline(fs,temp);
 	size_t pair=0;
 	size_t count=0;
 	size_t tick=0;
+  do{
+  getline(fs,temp);
 	if(temp.find("&bvvmodel")!=std::string::npos){
 					pair=species::nametag.size()*(species::nametag.size()+1)/2;
 					control::pair_num=pair;
@@ -321,7 +299,9 @@ void readPT(std::string PTfile){
 						temp_stream.clear();
 						getline(fs,temp);
 					}while(temp.find("/")==std::string::npos);
+          break;
 	}
+  }while(temp.find("&bvvmodel")!=std::string::npos);
 	if(world_rank==0){
 	std::cout<<"the starting BDV model parameters are:"<<std::endl;
 	for(size_t i=0;i<control::pair_num;i++){
@@ -343,15 +323,15 @@ void readPT(std::string PTfile){
 	if(temp.find("&lowbound")!=std::string::npos){
 		getline(fs,temp);
 		tick=0;
-		control::lb=new double [control::paracount_bvv+control::paracount_charge];
-		control::c=new double [control::paracount_bvv+control::paracount_charge];
-		control::vm=new double [control::paracount_bvv+control::paracount_charge];
-		for(size_t i=0;i<control::paracount_bvv+control::paracount_charge;i++){
+		control::lb=new double [control::paracount_bvv+control::independentcharge];
+		control::c= new double [control::paracount_bvv+control::independentcharge];
+		control::vm=new double [control::paracount_bvv+control::independentcharge];
+		for(size_t i=0;i<control::paracount_bvv+control::independentcharge;i++){
 			control::c[i]=2.0;
 		}
 		do{
 			temp=decomment(temp);
-			if(tick<control::paracount_bvv+control::paracount_charge){
+			if(tick<control::paracount_bvv+control::independentcharge){
 				temp_stream.clear();
 				temp_stream.str(temp);
 				temp_stream>>control::lb[tick];
@@ -365,10 +345,10 @@ void readPT(std::string PTfile){
 	if(temp.find("&highbound")!=std::string::npos){
 		getline(fs,temp);
 		tick=0;
-		control::ub=new double [control::paracount_bvv+control::paracount_charge];
+		control::ub=new double [control::paracount_bvv+control::independentcharge];
 		do{
 			temp=decomment(temp);
-			if(tick<control::paracount_bvv+control::paracount_charge){
+			if(tick<control::paracount_bvv+control::independentcharge){
 				temp_stream.clear();
 				temp_stream.str(temp);
 				temp_stream>>control::ub[tick];
@@ -404,7 +384,7 @@ void readPT(std::string PTfile){
 		getline(fs,temp);
 		}while(temp.find("/")==std::string::npos);
 	}
-	for(size_t i=0;i<control::paracount_bvv+control::paracount_charge;i++){
+	for(size_t i=0;i<control::paracount_bvv+control::independentcharge;i++){
 		control::vm[i]=control::ub[i]-control::lb[i];
 		}
 	if(world_rank==0){
@@ -433,18 +413,6 @@ void readPT(std::string PTfile){
         control::minienergytick.push_back(temp_ref);
     }
 }
-int map_xptick_chargetick(int xptick){
-	int sum=0;
-	int site=control::para_site_charge_change.size();
-	int i=0;
-	for(i=0;i<site;i++){
-		sum=sum+control::para_site_charge_change[i];
-		if(sum-1==xptick-control::paracount_bvv){
-			break;
-		}
-	}
-	return i;
-}
 void readvmmap(std::fstream &fs){
 	int world_rank;
 	MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
@@ -461,21 +429,39 @@ void readvmmap(std::fstream &fs){
 			temp_stream>>control::bvvmatrixmap[i][j];
 		temp_stream.clear();
 	}
+  while(getline(fs,temp)){
 	getline(fs,temp);
-    /*we fixed that only asite/bsite/osite charge change, so it's only three elements, BEAR IN MIND
-    * if you ever find better vaiation principle, you can change it!!!!!!!!!!!!!!!!!!!!!!!!
-    */
-	control::chargemap=new int [species::spe.size()];
-	temp_stream.clear();
-	temp_stream.str(temp);
-	for(size_t j=0;j<species::spe.size();j++){
-		temp_stream>>control::chargemap[j];
-	}
-    int sum=0;
-    for(size_t i=0;i<species::spe.size();i++){
-        sum=sum+control::chargemap[i];
-//        std::cout<<sum<<std::endl;
+  if(temp.find("independentcharge")!=std::string::npos){
+    getline(fs,temp);
+    temp_stream.clear();
+    temp_stream.str(temp);
+    temp_stream>>control::independentcharge;
+  }
+  if(temp.find("chargexp")!=std::string::npos){
+    control::chargexp=new double [control::independentcharge];
+    for(size_t i=0;i<control::independentcharge;i++){
+      getline(fs,temp);
+      temp_stream.clear();
+      temp_stream.str(temp);
+      temp_stream>>control::chargexp[i];
+      temp_stream>>control::chargexp[i];
     }
+  }
+  if(temp.find("chargematrix")!=std::string::npos){
+    control::chargemap=new double* [species::spe.size()];
+    for(size_t i=0 ; i < species::spe.size();i++){
+       control::chargemap[i]=new double [control::independentcharge];
+       getline(fs,temp);
+       temp_stream.clear();
+       temp_stream.str(temp);
+       for(size_t j=0;j<control::independentcharge;j++){
+        temp_stream>>control::chargemap[i][j];
+       }
+    }
+    break;
+  }
+  }
+  /*
 	if(world_rank==0){
 	std::cout<<"---------------------------------------------START READING MAP MATRIX ------------------------------------------"<<std::endl;
 	std::cout<<"the map matrix is: "<<std::endl;
@@ -486,6 +472,8 @@ void readvmmap(std::fstream &fs){
 		std::cout<<std::endl;
 	}
 	}
+  */
+  /*
 	for(size_t i=0;i<control::site_name.size();i++){
 		control::para_site_charge_change.push_back(0);
 		control::para_site_charge.push_back(0.0);
@@ -500,6 +488,8 @@ void readvmmap(std::fstream &fs){
 		std::cout<<"the site: "<<j<<" :"<<"{{charge change(1) or not(0):}} "<<control::para_site_charge_change[j]<<" the starting charge is: "<<control::para_site_charge[j]<<std::endl;
 	}
 	}
+  */
+  /*
 	int temp_sum=0;
 	for(size_t i=0;i<control::site_name.size();i++){
 		temp_sum=temp_sum+control::para_site_charge_change[i];
@@ -514,6 +504,7 @@ void readvmmap(std::fstream &fs){
 	else{
 		control::paracount_charge=control::neutral==1 ? temp_sum-1:temp_sum;
 	}
+  */
     /*We only consider all the site charge change or all the site charge not change*/
   /*
 	if(!(sum == species::spe.size()-1 || sum ==0)){
@@ -545,40 +536,25 @@ void readvmmap(std::fstream &fs){
 	/*store the second map function within control::paracount_charge*/
 	std::vector<int> tempxpcharge(2,0);
 	count=0;
-	if(control::paracount_charge==0){
+	if(control::independentcharge==0){
 	}
 	else{
-		if(control::neutral==1){
-			for(size_t i=control::paracount_bvv;i<control::paracount_charge+control::paracount_bvv;i++){
+			for(size_t i=control::paracount_bvv;i<control::independentcharge+control::paracount_bvv;i++){
 				tempxpcharge[0]=i;
-				tempxpcharge[1]=map_xptick_chargetick(i);
-				control::mapXpTickToChargeTick.push_back(tempxpcharge);
-			}
-			for(size_t start=species::site.size()-1;start>=0;start--){
-				if(control::para_site_charge_change[start]==1){
-				control::lastchargetick=start;
-				break;
-				}
-			}
-		}
-		else{
-			for(size_t i=control::paracount_bvv;i<control::paracount_charge+control::paracount_bvv;i++){
-				tempxpcharge[0]=i;
-				tempxpcharge[1]=map_xptick_chargetick(i);
+				tempxpcharge[1]=i-control::paracount_bvv;
 				control::mapXpTickToChargeTick.push_back(tempxpcharge);
 			}
 		}
-	}
-	/*malloc the storage space for control::paracount_charge and control::paracount_bvv*/
-  control::xop=new double [control::paracount_charge+control::paracount_bvv];
+	/*malloc the storage space for control::independentcharge and control::paracount_bvv*/
+  control::xop=new double [control::independentcharge+control::paracount_bvv];
 	for(size_t i=0;i<control::paracount_bvv;i++){
 		control::xop[i]=control::bvvmatrix[control::mapXpTickToBvvTick[i][1]][control::mapXpTickToBvvTick[i][2]];
 	}
-	for(size_t j=control::paracount_bvv;j<control::paracount_bvv+control::paracount_charge;j++){
-		control::xop[j]=control::para_site_charge[control::mapXpTickToChargeTick[j-control::paracount_bvv][1]];
+	for(size_t j=control::paracount_bvv;j<control::paracount_bvv+control::independentcharge;j++){
+		control::xop[j]=control::chargexp[control::mapXpTickToChargeTick[j-control::paracount_bvv][1]];
 	}
 	if(world_rank==0){
-	for(size_t i=0;i<control::paracount_charge+control::paracount_bvv;i++){
+	for(size_t i=0;i<control::independentcharge+control::paracount_bvv;i++){
 		std::cout<<control::xop[i]<<std::endl;
 	}
 	/*debug*/

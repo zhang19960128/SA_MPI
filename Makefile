@@ -1,4 +1,4 @@
-CXX=mpiicc
+CXX=mpiicpc
 CXXFLAGS=
 DEPS= interface.h image.h atom.h readion.h readpara.h sa.h penalty.h simann.h
 LIBPATH =

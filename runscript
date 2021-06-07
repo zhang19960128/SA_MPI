@@ -1,8 +1,9 @@
-#! /bin/bash
-#SBATCH -p debug
-#SBATCH -A m1700
-#SBATCH -N 5
-#SBATCH -C haswell
-#SBATCH -t 00:10:00
-#SBATCH -J haswell
-srun -n 160 ./sa.x
+#!/bin/bash
+#PBS -q debug
+#PBS -l select=1:ncpus=40:mpiprocs=40
+#PBS -l walltime=00:30:00
+#PBS -j oe
+#PBS -A ONRDC17423173
+cd $PBS_O_WORKDIR
+#module swap mpt/2.20 compiler/intelmpi/2019.4.243
+mpirun -n 40 ./sa.x control.PT >sa.out
