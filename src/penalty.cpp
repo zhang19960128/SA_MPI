@@ -60,7 +60,7 @@ void mapjiahao(double* xp){
     for(size_t j=0;j< control::independentcharge;j++){
       sum=sum+control::chargemap[i][j]*control::chargexp[j];
     }
-    control::charge[i]=sum;
+    control::charge[i]=sum+control::chargeres[i];
   }
 }
 double PenaltyFunc(double* xp, box* system,int numberone, int index,int databasetick){

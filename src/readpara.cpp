@@ -45,6 +45,7 @@ namespace control{
  double* charge;/*it's the same length as input species*/
  int independentcharge;
  double* chargexp;
+ double* chargeres;
  double** chargemap;/*charge map matrix*/
  int* type;/*type matrix*/
  int pair_num;/*how many pair of parameteres in BVV*/
@@ -312,6 +313,7 @@ void readPT(std::string PTfile){
 	}
 	}
 	getline(fs,temp);
+  std::cout<<"----DEBUG------------"<<std::endl;
 	if(temp.find("&map")!=std::string::npos){
 	readvmmap(fs);
 	}
@@ -412,6 +414,7 @@ void readPT(std::string PTfile){
         control::ionsize.push_back(temp_size);
         control::minienergytick.push_back(temp_ref);
     }
+    std::cout<<"-----------------------Finished Reading PT----------------"<<std::endl;
 }
 void readvmmap(std::fstream &fs){
 	int world_rank;
@@ -430,14 +433,14 @@ void readvmmap(std::fstream &fs){
 		temp_stream.clear();
 	}
   while(getline(fs,temp)){
-	getline(fs,temp);
-  if(temp.find("independentcharge")!=std::string::npos){
+  if(temp.find("&independentcharge")!=std::string::npos){
     getline(fs,temp);
     temp_stream.clear();
     temp_stream.str(temp);
     temp_stream>>control::independentcharge;
+    std::cout<<"I am here: "<<"Independentcharges is: "<<control::independentcharge<<std::endl;
   }
-  if(temp.find("chargexp")!=std::string::npos){
+  if(temp.find("&chargexp")!=std::string::npos){
     control::chargexp=new double [control::independentcharge];
     for(size_t i=0;i<control::independentcharge;i++){
       getline(fs,temp);
@@ -447,7 +450,7 @@ void readvmmap(std::fstream &fs){
       temp_stream>>control::chargexp[i];
     }
   }
-  if(temp.find("chargematrix")!=std::string::npos){
+  if(temp.find("&chargematrix")!=std::string::npos){
     control::chargemap=new double* [species::spe.size()];
     for(size_t i=0 ; i < species::spe.size();i++){
        control::chargemap[i]=new double [control::independentcharge];
@@ -457,6 +460,15 @@ void readvmmap(std::fstream &fs){
        for(size_t j=0;j<control::independentcharge;j++){
         temp_stream>>control::chargemap[i][j];
        }
+    }
+  }
+  if(temp.find("&chargeresidue")!=std::string::npos){
+    control::chargeres=new double [species::spe.size()];
+    for(size_t i=0 ; i < species::spe.size();i++){
+       getline(fs,temp);
+       temp_stream.clear();
+       temp_stream.str(temp);
+      temp_stream>>control::chargeres[i];
     }
     break;
   }
@@ -554,6 +566,7 @@ void readvmmap(std::fstream &fs){
 		control::xop[j]=control::chargexp[control::mapXpTickToChargeTick[j-control::paracount_bvv][1]];
 	}
 	if(world_rank==0){
+    std::cout<<"Independent Charge is: "<<control::independentcharge<<std::endl;
 	for(size_t i=0;i<control::independentcharge+control::paracount_bvv;i++){
 		std::cout<<control::xop[i]<<std::endl;
 	}

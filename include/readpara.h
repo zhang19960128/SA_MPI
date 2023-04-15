@@ -16,6 +16,7 @@ extern double* c;
 extern double* charge;
 extern int independentcharge;
 extern double* chargexp;
+extern double* chargeres;
 extern double** chargemap;
 extern int* type;
 extern int pair_num;
