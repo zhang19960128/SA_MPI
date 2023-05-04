@@ -1,5 +1,5 @@
 This code is built by the people in [Rappe Group](http://web.sas.upenn.edu/rappegroup/)
-Contributors are **Jiahao Zhang** and **ZhengBang Dai**.  
+Contributors are **Jiahao Zhang**, **ZhengBang Dai** under the supervision of **Prof. Rappe**.  
 If you encounter any problems, please don't contact us.  
 1. Simulated Annealing Code for Bond-Valence parameters generation.
 2. Fully paralleled with MPI code.
